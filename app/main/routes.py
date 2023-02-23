@@ -11,7 +11,13 @@ from app.translate import translate
 from app.main import bp
 
 # This g variable provided by Flask is a place where the application can store data that needs to persist through the life of a request. 
-
+@bp.route('/user/<username>/popup')
+@login_required
+def user_popup(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    form = EmptyForm()
+    return render_template('user_popup.html', user=user, form=form)
+    
 @bp.route('/search')
 @login_required
 def search():
@@ -26,7 +32,7 @@ def search():
         if page > 1 else None
     return render_template('search.html', title=_('Search'), posts=posts,
                            next_url=next_url, prev_url=prev_url)
-                           
+
 @bp.before_app_request
 def before_request():
     if current_user.is_authenticated:
